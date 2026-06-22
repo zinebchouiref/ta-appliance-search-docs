@@ -66,6 +66,15 @@ a:hover{text-decoration:underline}
   text-transform:uppercase;color:var(--muted)}
 .brand-plate .ttl{font-family:var(--disp);font-weight:700;font-size:16px;line-height:1.2;margin-top:3px}
 .brand-plate .red{color:var(--accent)}
+.brand-lockup{padding:2px 4px 16px;border-bottom:1px solid var(--line-soft);margin-bottom:10px}
+.brand-logo{width:100%;max-width:188px;height:auto;display:block}
+.brand-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:11px}
+.topbar-logo{height:26px;width:auto;display:block}
+.hero-logo{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:9px 13px;margin-bottom:18px;box-shadow:0 1px 2px rgba(21,23,28,.05)}
+.hero-logo img{height:34px;width:auto;display:block}
+.tag.dev{background:#15171C;color:#E7EAEF;border-color:#15171C}
+.tag.dev::before{background:#fff}
 .navgroup{margin:18px 0 6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--faint);padding:0 8px}
 .nav a{display:block;color:var(--muted);font-size:14px;font-weight:450;
@@ -212,15 +221,16 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
 <body>
 
 <div class="topbar">
-  <span class="ttl">TA <span class="red">·</span> Search Docs</span>
+  <img class="topbar-logo" src="assets/ta-logo.png" alt="TA Appliances &amp; Barbecues" />
+  <span class="ttl">Search &amp; Collection Build</span>
 </div>
 
 <div class="shell">
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar">
-    <div class="brand-plate">
-      <div class="kic">MODEL · TA-SEARCH-2026</div>
-      <div class="ttl">Search &amp; Collection<br /><span class="red">Build Documentation</span></div>
+    <div class="brand-lockup">
+      <img class="brand-logo" src="assets/ta-logo.png" alt="TA Appliances &amp; Barbecues" />
+      <div class="brand-sub">Search &amp; Collection Build</div>
     </div>
     <nav class="nav">
       <div class="navgroup">Start here</div>
@@ -239,7 +249,7 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
       <a href="#fly-noresults">No-results state</a>
 
       <div class="navgroup">Managing it</div>
-      <a href="#merchant">Merchant guide (Customizer)</a>
+      <a href="#merchant">Managing your content</a>
       <a href="#algolia">Algolia &amp; the dashboard</a>
 
       <div class="navgroup">Quality</div>
@@ -258,9 +268,10 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
       <div class="hero">
         <div class="hero-in">
           <div class="bolts"><i></i><i></i></div>
-          <div class="ey">Theme · ta-appliance-main-hotfix-live · Jun 2026</div>
-          <h1>The search &amp; collection rebuild, <span class="red">documented end to end</span></h1>
-          <p class="lede">A new Algolia-powered header search flyout and a reworked collection-page filtering experience. This hub explains what shipped, where it lives in the theme, and exactly how to edit each piece — in code or in the Shopify Customizer.</p>
+          <div class="hero-logo"><img src="assets/ta-logo.png" alt="TA Appliances &amp; Barbecues" /></div>
+          <div class="ey">Prepared for TA Appliance · June 2026</div>
+          <h1>Your new search &amp; <span class="red">collection experience</span></h1>
+          <p class="lede">Here's everything we built for your site's search bar and category pages — what your shoppers now experience, and how your team manages each piece day to day. Share it with anyone on your side, including your developers.</p>
           <div class="meta">
             <div class="m"><b>7</b><span>Features shipped</span></div>
             <div class="m"><b>3</b><span>Search states</span></div>
@@ -293,12 +304,12 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
         <div class="eyebrow">Orientation</div>
         <h2>How to use this doc</h2>
       </div>
-      <p>Two audiences, one hub:</p>
+      <p>This guide is written for your whole team:</p>
       <ul>
-        <li><strong>Developers</strong> — each feature lists what it does, the exact files and line ranges, and how to extend it. File paths look like <code class="path">assets/algolia_custom.js</code>; line refs like <code>:919–1008</code> point into the live theme export.</li>
-        <li><strong>Merchants / store admins</strong> — jump to the <a href="#merchant">Merchant guide</a>. It’s plain-language: what you can edit in the Theme Customizer and how, no code required.</li>
+        <li><strong>You and your team</strong> — start with <a href="#merchant">Managing your search content</a>. It’s plain-language: what you can change yourself in the Shopify Customizer, no code needed. Each feature walkthrough also explains what your shoppers now experience.</li>
+        <li><strong>Your developers</strong> — the deeper sections list exactly where each piece lives in the theme and how to extend it. Those are marked <span class="tag dev">For your developers</span> so it’s clear what’s reference material versus what’s for you.</li>
       </ul>
-      <p>Anything in monospace is a literal identifier — a file path, a URL parameter, an Algolia index, or a SKU. Red monospace is a theme file you can open. Design references throughout are the approved mockups (desktop + mobile).</p>
+      <p>Anything in monospace is a literal name — a file, a setting, or a product SKU. Design references throughout are the approved mockups (desktop + mobile). If anything here is unclear, reach out to us and we’ll walk you through it.</p>
     </section>
 
     <!-- ============================================================ -->
@@ -323,7 +334,7 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
 /collections/cooking?category=ranges,wall_ovens&sort=price_asc&page=2</pre>
       </div>
 
-      <h3>How it works</h3>
+      <h3>How it works <span class="tag dev">For your developers</span></h3>
       <p>InstantSearch runs with a <strong>custom <code>stateMapping</code> router</strong> (not the default simple router) defined inline in <code class="path">assets/algolia_custom.js</code> <code>:919–1008</code>. Two functions do the translating:</p>
       <div class="kv">
         <dt>stateToRoute()</dt><dd><code>:921–977</code> — reads live InstantSearch state <em>plus</em> the custom DOM widgets, and writes URL params.</dd>
@@ -385,7 +396,7 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
         <p style="margin-top:12px">A single function, <code>window.clearAllFilters</code> (<code class="path">assets/algolia_custom.js</code> <code>:2474–2516</code>), resets everything in order: the three toggles, the Category checkboxes, the price slider, and all InstantSearch refinements — then runs one search. Sort order is preserved; page resets to 1.</p>
       </div>
 
-      <h3>What it resets</h3>
+      <h3>What it resets <span class="tag dev">For your developers</span></h3>
       <ol>
         <li>Unchecks <code>#on-sale</code> / <code>#in-stock</code> / <code>#new-arrival</code> and clears their <code>.active</code> class (<code>:2475–2482</code>).</li>
         <li>Unchecks the Category boxes and removes the <code>checked</code> attribute so a URL-restored state can’t linger (<code>:2488–2491</code>).</li>
@@ -424,7 +435,7 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
         <p style="margin-top:12px">When ≥1 filter is active, a bar appears above the grid: a <code>Filters:</code> label, one chip per active filter (<code>Brand: Whirlpool ×</code>), and a Clear All link. Each chip’s × removes just that filter; the bar hides itself when nothing is active. Chips wrap on desktop and scroll horizontally on mobile.</p>
       </div>
 
-      <h3>How it works</h3>
+      <h3>How it works <span class="tag dev">For your developers</span></h3>
       <div class="kv">
         <dt>Markup</dt><dd><code class="path">sections/algolia_product-list.liquid</code> <code>:133–142</code> — <code>#applied-filters-bar</code> (starts <code>hidden</code>), <code>#applied-filters-chips</code>, and the <code>[data-clear-all]</code> button.</dd>
         <dt>Render</dt><dd><code>renderAppliedFiltersBar()</code> in <code class="path">assets/algolia_custom.js</code> <code>:576–652</code>, called from <code>renderCurrentRefinements</code> on every InstantSearch render.</dd>
@@ -527,7 +538,7 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
         <p>Once the shopper types ≥2 characters, the panel becomes live federated results: suggestions, categories, a product grid, an exact-SKU match, and pages.</p>
       </div>
 
-      <h3>The queries</h3>
+      <h3>The queries <span class="tag dev">For your developers</span></h3>
       <p>Each debounced keystroke fires <strong>three parallel Algolia batches</strong> (run separately so a missing index can’t break the others), then renders once all resolve (<code class="path">assets/ta-search.js</code> <code>:486–513</code>):</p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>Batch</th><th>Index</th><th>Params</th></tr></thead>
@@ -611,9 +622,9 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
 
     <section id="merchant">
       <div class="sec-head">
-        <div class="eyebrow">For the store admin · no code</div>
-        <h2>Merchant guide — editing in the Customizer</h2>
-        <p>Everything you can change about the search dropdown lives in one place. No developer needed.</p>
+        <div class="eyebrow">For you and your team · no code needed</div>
+        <h2>Managing your search content</h2>
+        <p>Everything you can change about the search dropdown lives in one place in your Shopify admin — promotions, help links, and the settings below. No developer needed.</p>
       </div>
 
       <div class="note info">
@@ -661,8 +672,8 @@ figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)
 
     <section id="algolia">
       <div class="sec-head">
-        <div class="eyebrow">For developers / Algolia admin</div>
-        <h2>Algolia &amp; the dashboard</h2>
+        <div class="eyebrow">Technical reference</div>
+        <h2>Algolia &amp; the dashboard <span class="tag dev">For your developers</span></h2>
         <p>How the theme talks to Algolia, which indices it uses, and what must be configured dashboard-side for every feature to work.</p>
       </div>
 
