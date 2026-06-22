@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TA Appliance — Search &amp; Collection Build Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --ground:#F4F6F8;
+  --surface:#FFFFFF;
+  --panel:#EAEDF1;
+  --text:#15171C;
+  --muted:#5B6472;
+  --faint:#8A93A0;
+  --line:#DCE0E6;
+  --line-soft:#E7EAEF;
+  --accent:#D51317;       /* TA brand red */
+  --accent-ink:#A20E12;
+  --ok:#1F7A4D;
+  --warn:#9A6B12;
+  --steel-1:#EDF0F3;
+  --steel-2:#DEE3E9;
+  --steel-3:#CDD4DC;
+  --radius:14px;
+  --radius-s:8px;
+  --maxw:880px;
+  --nav:288px;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:"Space Grotesk",system-ui,sans-serif;
+  --body:"Inter",system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--ground);color:var(--text);
+  font-family:var(--body);font-size:15.5px;line-height:1.62;
+  -webkit-font-smoothing:antialiased;letter-spacing:-0.005em;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px;border-radius:3px}
+
+/* ---------- layout ---------- */
+.shell{display:flex;min-height:100vh;align-items:flex-start}
+.sidebar{
+  width:var(--nav);flex:0 0 var(--nav);position:sticky;top:0;height:100vh;
+  overflow-y:auto;background:var(--surface);border-right:1px solid var(--line);
+  padding:26px 18px 40px;
+}
+.main{flex:1;min-width:0;display:flex;justify-content:center;padding:0 40px}
+.content{width:100%;max-width:var(--maxw);padding:56px 0 140px}
+
+/* ---------- sidebar nav ---------- */
+.brand-plate{
+  border:1px solid var(--line);border-radius:var(--radius-s);
+  background:linear-gradient(160deg,var(--steel-1),var(--steel-3));
+  padding:14px 14px 13px;margin-bottom:22px;position:relative;overflow:hidden;
+}
+.brand-plate::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.32) 0 1px,transparent 1px 4px);
+  pointer-events:none;mix-blend-mode:overlay}
+.brand-plate .kic{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted)}
+.brand-plate .ttl{font-family:var(--disp);font-weight:700;font-size:16px;line-height:1.2;margin-top:3px}
+.brand-plate .red{color:var(--accent)}
+.navgroup{margin:18px 0 6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--faint);padding:0 8px}
+.nav a{display:block;color:var(--muted);font-size:14px;font-weight:450;
+  padding:6px 10px;border-radius:7px;border-left:2px solid transparent;margin:1px 0;
+  letter-spacing:-0.01em}
+.nav a:hover{background:var(--panel);color:var(--text);text-decoration:none}
+.nav a.active{color:var(--text);background:#FBE9E9;border-left-color:var(--accent);font-weight:500}
+.nav a .sub{display:block;font-size:12.5px;color:var(--faint);padding-left:0}
+
+/* ---------- hero spec plate ---------- */
+.hero{
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  background:linear-gradient(155deg,#F1F3F6 0%,#E2E7ED 55%,#D2D9E1 100%);
+  position:relative;margin-bottom:40px;
+}
+.hero::before{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(180deg,rgba(255,255,255,.30) 0 1px,transparent 1px 5px);
+  mix-blend-mode:overlay;pointer-events:none}
+.hero-in{position:relative;padding:34px 34px 30px}
+.hero .bolts{position:absolute;top:12px;right:14px;display:flex;gap:9px}
+.hero .bolts i{width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,#9aa3ad);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.hero .ey{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-family:var(--disp);font-weight:700;font-size:clamp(28px,4vw,40px);
+  line-height:1.04;letter-spacing:-0.02em;margin:10px 0 8px;max-width:18ch}
+.hero h1 .red{color:var(--accent)}
+.hero p.lede{margin:0;max-width:60ch;color:#2A2F37;font-size:16px}
+.hero .meta{display:flex;flex-wrap:wrap;gap:26px;margin-top:22px;
+  border-top:1px solid rgba(21,23,28,.10);padding-top:18px}
+.hero .meta .m b{display:block;font-family:var(--disp);font-weight:700;font-size:22px;line-height:1}
+.hero .meta .m span{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted)}
+
+/* ---------- status board ---------- */
+.board{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);
+  overflow:hidden;margin:0 0 14px}
+.board-row{display:grid;grid-template-columns:96px 1fr auto;gap:14px;align-items:center;
+  padding:11px 18px;border-top:1px solid var(--line-soft);font-size:14px}
+.board-row:first-child{border-top:none}
+.board-row .id{font-family:var(--mono);font-size:12.5px;color:var(--muted);font-weight:500}
+.board-row .nm{letter-spacing:-0.01em}
+.st{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.st.done{color:var(--ok);background:#E8F4EE;border-color:#CBE6D8}
+.st.uat{color:var(--warn);background:#F7F0DF;border-color:#EBDCB6}
+.st.blocked{color:#fff;background:var(--accent)}
+.st.cancel{color:var(--faint);background:var(--panel);text-decoration:line-through}
+
+/* ---------- sections & type ---------- */
+section{scroll-margin-top:24px;padding-top:18px}
+.sec-head{margin:46px 0 18px}
+.sec-head .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);font-weight:500}
+.sec-head h2{font-family:var(--disp);font-weight:700;font-size:27px;letter-spacing:-0.02em;
+  margin:6px 0 0;line-height:1.1}
+.sec-head p{color:var(--muted);margin:9px 0 0;max-width:64ch}
+h3{font-family:var(--disp);font-weight:600;font-size:19px;letter-spacing:-0.01em;margin:30px 0 8px}
+h4{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:20px 0 6px;letter-spacing:-0.01em}
+p{margin:10px 0}
+ul,ol{margin:10px 0;padding-left:22px}
+li{margin:5px 0}
+strong{font-weight:600}
+hr.div{border:none;border-top:1px solid var(--line);margin:40px 0}
+
+/* ---------- feature card ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:24px 26px;margin:18px 0}
+.tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--muted);
+  border:1px solid var(--line);border-radius:6px;padding:3px 9px;background:var(--panel)}
+.tag::before{content:"";width:6px;height:6px;border-radius:1px;background:var(--accent)}
+
+/* ---------- inline code / spec chips ---------- */
+code,.mono{font-family:var(--mono);font-size:.86em}
+:not(pre)>code{background:#EEF1F4;border:1px solid var(--line-soft);border-radius:5px;
+  padding:1px 5px;color:#2C313A;white-space:nowrap}
+.path{color:var(--accent-ink);background:#FBECEC;border-color:#F3D6D6}
+pre{background:#15171C;color:#E7EAEF;border-radius:10px;padding:16px 18px;overflow-x:auto;
+  font-family:var(--mono);font-size:12.8px;line-height:1.6;margin:14px 0;border:1px solid #0c0d10}
+pre .c{color:#7e8896}
+pre .k{color:#ff8e8e}
+pre .s{color:#9ad1a6}
+
+/* ---------- tables ---------- */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:13.6px;min-width:520px}
+th,td{text-align:left;padding:9px 14px;border-top:1px solid var(--line-soft);vertical-align:top}
+thead th{background:var(--panel);border-top:none;font-family:var(--mono);font-size:11px;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tbody tr:hover{background:#FAFBFC}
+td code{white-space:normal}
+
+/* ---------- callouts ---------- */
+.note{border-radius:10px;padding:14px 16px 14px 18px;margin:16px 0;font-size:14.2px;
+  border:1px solid var(--line);border-left-width:3px;background:var(--surface)}
+.note .lab{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  font-weight:600;display:block;margin-bottom:4px}
+.note.edit{border-left-color:var(--accent);background:#FCEFEF}
+.note.edit .lab{color:var(--accent-ink)}
+.note.heads{border-left-color:var(--warn);background:#FAF4E6}
+.note.heads .lab{color:var(--warn)}
+.note.info{border-left-color:var(--muted);background:#F1F4F7}
+.note.info .lab{color:var(--muted)}
+.note p:first-of-type{margin-top:0}
+.note p:last-child{margin-bottom:0}
+
+/* ---------- design figures ---------- */
+.shots{display:grid;grid-template-columns:1fr;gap:18px;margin:18px 0}
+figure{margin:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+figure .cap{display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:9px 14px;border-bottom:1px solid var(--line-soft);
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+figure .cap .dot{display:flex;gap:5px}
+figure .cap .dot i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.frame{max-height:460px;overflow-y:auto;background:#fff}
+.frame img{display:block;width:100%;height:auto}
+.frame.tall{max-height:520px}
+.shots.duo{grid-template-columns:1fr}
+@media(min-width:720px){
+  .shots.duo{grid-template-columns:2fr 1fr;align-items:start}
+}
+.scrollhint{font-family:var(--mono);font-size:10px;color:var(--faint);text-transform:none;letter-spacing:0}
+
+.lede2{font-size:16.5px;color:#2A2F37;max-width:64ch}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:12px 0;font-size:14px}
+.kv dt{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.kv dd{margin:0}
+.footer{border-top:1px solid var(--line);margin-top:60px;padding-top:22px;color:var(--faint);
+  font-size:13px;font-family:var(--mono);letter-spacing:.02em}
+
+.topbar{display:none}
+@media(max-width:880px){
+  .sidebar{display:none}
+  .topbar{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;
+    background:var(--surface);border-bottom:1px solid var(--line);padding:12px 18px}
+  .topbar .ttl{font-family:var(--disp);font-weight:700;font-size:15px}
+  .topbar .red{color:var(--accent)}
+  .main{padding:0 20px}
+  .content{padding:26px 0 100px}
+  .hero-in{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="ttl">TA <span class="red">·</span> Search Docs</span>
+</div>
+
+<div class="shell">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand-plate">
+      <div class="kic">MODEL · TA-SEARCH-2026</div>
+      <div class="ttl">Search &amp; Collection<br /><span class="red">Build Documentation</span></div>
+    </div>
+    <nav class="nav">
+      <div class="navgroup">Start here</div>
+      <a href="#overview">Overview &amp; status</a>
+      <a href="#how-to-use">How to use this doc</a>
+
+      <div class="navgroup">Collection page</div>
+      <a href="#plp-url">URL filter persistence</a>
+      <a href="#plp-clear">Clear All</a>
+      <a href="#plp-bar">Applied Filters bar</a>
+
+      <div class="navgroup">Search flyout</div>
+      <a href="#fly-overview">How the flyout works</a>
+      <a href="#fly-empty">Empty state</a>
+      <a href="#fly-typing">Typing state</a>
+      <a href="#fly-noresults">No-results state</a>
+
+      <div class="navgroup">Managing it</div>
+      <a href="#merchant">Merchant guide (Customizer)</a>
+      <a href="#algolia">Algolia &amp; the dashboard</a>
+
+      <div class="navgroup">Quality</div>
+      <a href="#performance">Performance (TARET-227)</a>
+      <a href="#heads-up">Known issues / heads-up</a>
+      <a href="#reference">File &amp; ticket reference</a>
+    </nav>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+  <div class="content">
+
+    <!-- ===== OVERVIEW ===== -->
+    <section id="overview">
+      <div class="hero">
+        <div class="hero-in">
+          <div class="bolts"><i></i><i></i></div>
+          <div class="ey">Theme · ta-appliance-main-hotfix-live · Jun 2026</div>
+          <h1>The search &amp; collection rebuild, <span class="red">documented end to end</span></h1>
+          <p class="lede">A new Algolia-powered header search flyout and a reworked collection-page filtering experience. This hub explains what shipped, where it lives in the theme, and exactly how to edit each piece — in code or in the Shopify Customizer.</p>
+          <div class="meta">
+            <div class="m"><b>7</b><span>Features shipped</span></div>
+            <div class="m"><b>3</b><span>Search states</span></div>
+            <div class="m"><b>3</b><span>Algolia indices</span></div>
+            <div class="m"><b>1</b><span>Customizer section</span></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="lede2">The work splits into two surfaces: the <strong>collection page (PLP)</strong> — where filters now live in the URL, the “Clear All” bug is fixed, and a new chip bar shows active filters — and the <strong>header search flyout</strong>, a brand-new predictive search with empty, typing, and no-results states.</p>
+
+      <h3>Where every ticket landed</h3>
+      <div class="board">
+        <div class="board-row"><span class="id">TARET-217</span><span class="nm">Design — search dropdown + filters (Trail Appliances reference)</span><span class="st done">Done</span></div>
+        <div class="board-row"><span class="id">TARET-218</span><span class="nm">Filter state persistence via URL query params</span><span class="st done">Done</span></div>
+        <div class="board-row"><span class="id">TARET-219</span><span class="nm">Fix “Clear All” across all filter types</span><span class="st done">Done</span></div>
+        <div class="board-row"><span class="id">TARET-220</span><span class="nm">Applied Filters bar above the product grid</span><span class="st done">Done</span></div>
+        <div class="board-row"><span class="id">TARET-221</span><span class="nm">Search flyout — empty / pre-typing state</span><span class="st done">Done</span></div>
+        <div class="board-row"><span class="id">TARET-223</span><span class="nm">Search flyout — typing state (federated results)</span><span class="st done">Done</span></div>
+        <div class="board-row"><span class="id">TARET-224</span><span class="nm">Search flyout — no-results state</span><span class="st done">Done</span></div>
+        <div class="board-row"><span class="id">TARET-226</span><span class="nm">Analytics event tracking for dropdown interactions</span><span class="st uat">UAT</span></div>
+        <div class="board-row"><span class="id">TARET-227</span><span class="nm">Performance baseline + 15% threshold validation</span><span class="st blocked">Blocked</span></div>
+        <div class="board-row"><span class="id">TARET-228</span><span class="nm">Surfacing offers in search (stopgap link)</span><span class="st cancel">Canceled</span></div>
+      </div>
+      <p class="note info"><span class="lab">Status note</span> TARET-226 (analytics) is in UAT and TARET-227 (performance) is Blocked — see <a href="#performance">Performance</a> for what that means and a verdict. TARET-228 was canceled and was not built.</p>
+    </section>
+
+    <section id="how-to-use">
+      <div class="sec-head">
+        <div class="eyebrow">Orientation</div>
+        <h2>How to use this doc</h2>
+      </div>
+      <p>Two audiences, one hub:</p>
+      <ul>
+        <li><strong>Developers</strong> — each feature lists what it does, the exact files and line ranges, and how to extend it. File paths look like <code class="path">assets/algolia_custom.js</code>; line refs like <code>:919–1008</code> point into the live theme export.</li>
+        <li><strong>Merchants / store admins</strong> — jump to the <a href="#merchant">Merchant guide</a>. It’s plain-language: what you can edit in the Theme Customizer and how, no code required.</li>
+      </ul>
+      <p>Anything in monospace is a literal identifier — a file path, a URL parameter, an Algolia index, or a SKU. Red monospace is a theme file you can open. Design references throughout are the approved mockups (desktop + mobile).</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- COLLECTION PAGE -->
+    <!-- ============================================================ -->
+    <hr class="div" />
+
+    <section id="plp-url">
+      <div class="sec-head">
+        <div class="eyebrow">Collection page · TARET-218</div>
+        <h2>URL filter persistence</h2>
+        <p>Every active filter is written into the page URL in real time, so a filtered grid survives refresh, back-navigation from a product page, and link-sharing.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">What it does</span>
+        <p style="margin-top:12px">Apply Brand, Category, Colour, Price, the three toggles (In Stock / On Sale / New Arrivals), sort, or page, and the URL updates with no reload. Paste that URL anywhere — fresh tab, incognito, a teammate’s machine — and the same filtered grid loads. Hit back from a product page and the exact filter state returns.</p>
+        <pre><span class="c"># Example — brand + in-stock + price</span>
+/collections/refrigerators?brand=Samsung,LG&in_stock=true&price=500:2500
+
+<span class="c"># Example — category + sort + page</span>
+/collections/cooking?category=ranges,wall_ovens&sort=price_asc&page=2</pre>
+      </div>
+
+      <h3>How it works</h3>
+      <p>InstantSearch runs with a <strong>custom <code>stateMapping</code> router</strong> (not the default simple router) defined inline in <code class="path">assets/algolia_custom.js</code> <code>:919–1008</code>. Two functions do the translating:</p>
+      <div class="kv">
+        <dt>stateToRoute()</dt><dd><code>:921–977</code> — reads live InstantSearch state <em>plus</em> the custom DOM widgets, and writes URL params.</dd>
+        <dt>routeToState()</dt><dd><code>:979–1006</code> — reads URL params on load / back-nav and restores InstantSearch state.</dd>
+      </div>
+      <p>The three toggles and the Category checkboxes aren’t InstantSearch widgets — they’re plain DOM. So they’re read straight from the DOM in <code>stateToRoute</code> and restored <em>outside</em> the router (toggles at <code>:247–266</code>, category at <code>:1049–1060</code>, and re-synced on browser back/forward by a <code>popstate</code> handler at <code>:2433–2459</code>). This split is deliberate — making them InstantSearch widgets caused a “filter instantly undone” bug.</p>
+
+      <h4>Full parameter map</h4>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Filter</th><th>URL param</th><th>Format</th></tr></thead>
+        <tbody>
+          <tr><td>Search query</td><td><code>q</code></td><td>raw string (omitted if empty)</td></tr>
+          <tr><td>Brand</td><td><code>brand</code></td><td>comma-joined values</td></tr>
+          <tr><td>Colour</td><td><code>colour</code></td><td>comma-joined</td></tr>
+          <tr><td>Energy Star</td><td><code>energystar</code></td><td>comma-joined</td></tr>
+          <tr><td>Any other facet</td><td><code>facet_&lt;slug&gt;</code></td><td>comma-joined (auto fallback)</td></tr>
+          <tr><td>Price</td><td><code>price</code></td><td><code>lo:hi</code> e.g. <code>500:1500</code></td></tr>
+          <tr><td>Sort</td><td><code>sort</code></td><td><code>popular</code> / <code>price_asc</code> / <code>price_desc</code> / <code>title_asc</code> / <code>title_desc</code></td></tr>
+          <tr><td>Page</td><td><code>page</code></td><td>integer, only when &gt; 1</td></tr>
+          <tr><td>In Stock</td><td><code>in_stock</code></td><td><code>true</code> when checked</td></tr>
+          <tr><td>On Sale</td><td><code>on_sale</code></td><td><code>true</code> when checked</td></tr>
+          <tr><td>New Arrivals</td><td><code>new_arrival</code></td><td><code>true</code> when checked</td></tr>
+          <tr><td>Category</td><td><code>category</code></td><td>comma-joined slugs</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="note edit">
+        <span class="lab">How to add a new facet to the URL</span>
+        <p>For a standard refinement-list facet you usually don’t need to do anything — it’s auto-handled as <code>facet_&lt;slug&gt;</code>. For a <em>pretty</em> named param: add an <code>else if</code> branch in <code>stateToRoute</code> (<code>:927–939</code>) that writes <code>route.yourparam</code>, and a matching read in <code>routeToState</code> (<code>:986–994</code>). For a non-InstantSearch custom control (like the toggles), you also wire it in <code>stateToRoute</code> DOM reads (<code>:963–968</code>), the load restore (pattern at <code>:247–266</code>), the <code>popstate</code> re-sync (<code>:2437–2450</code>), <code>updateFilters()</code> (<code>:300–351</code>), <code>clearAllFilters</code> (<code>:2475–2491</code>), and the chip bar (<code>:611–620</code>).</p>
+      </div>
+
+      <div class="note heads">
+        <span class="lab">Heads-up</span>
+        <p>The old <code>#cat=</code> hash workaround was <strong>not fully removed</strong> — it survives as a one-time migration shim at <code>:865–881</code> (with a single <code>history.replaceState</code> at <code>:877</code>) that rewrites legacy <code>#cat=…</code> links into <code>?category=…</code>. That’s intentional backward-compat, not stray code. <code>__taInitialCatHash</code> is gone.</p>
+      </div>
+
+      <div class="shots duo">
+        <figure>
+          <div class="cap"><span>Collection · filters applied · desktop</span><span class="dot"><i></i><i></i><i></i></span></div>
+          <div class="frame tall"><img src="assets/designs/collection-page-filters-applied.png" alt="Collection page with filters applied, desktop" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="cap"><span>Mobile</span><span class="scrollhint">scroll ↕</span></div>
+          <div class="frame tall"><img src="assets/designs/collection-page-filters-applied-1.png" alt="Collection page with filters applied, mobile" loading="lazy" /></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- CLEAR ALL -->
+    <section id="plp-clear">
+      <div class="sec-head">
+        <div class="eyebrow">Collection page · TARET-219</div>
+        <h2>Clear All</h2>
+        <p>One click now clears <em>every</em> active filter — not just Brand, which was the headline bug.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">What it does</span>
+        <p style="margin-top:12px">A single function, <code>window.clearAllFilters</code> (<code class="path">assets/algolia_custom.js</code> <code>:2474–2516</code>), resets everything in order: the three toggles, the Category checkboxes, the price slider, and all InstantSearch refinements — then runs one search. Sort order is preserved; page resets to 1.</p>
+      </div>
+
+      <h3>What it resets</h3>
+      <ol>
+        <li>Unchecks <code>#on-sale</code> / <code>#in-stock</code> / <code>#new-arrival</code> and clears their <code>.active</code> class (<code>:2475–2482</code>).</li>
+        <li>Unchecks the Category boxes and removes the <code>checked</code> attribute so a URL-restored state can’t linger (<code>:2488–2491</code>).</li>
+        <li>Disables both Clear buttons immediately, before re-render (<code>:2493–2500</code>).</li>
+        <li>Calls <code>search.helper.clearRefinements()</code> — clears Brand, Colour, Energy Star, spec facets, and the price range (<code>:2502–2504</code>).</li>
+        <li>Runs one combined search via <code>configure.refine({ filters, page:0 })</code> (<code>:2506–2515</code>). The URL cleans itself because the router then serialises an empty state.</li>
+      </ol>
+
+      <h3>Buttons wired to it</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Where</th><th>Selector</th><th>Wired in</th></tr></thead>
+        <tbody>
+          <tr><td>Sidebar</td><td><code>.ais-ClearRefinements-button</code></td><td>document capture listener <code>:2518–2525</code></td></tr>
+          <tr><td>Applied filters bar</td><td><code>[data-clear-all]</code></td><td>same capture listener <code>:2518–2525</code></td></tr>
+          <tr><td>Mobile drawer</td><td><code>.clr-button span[data-clear]</code></td><td><code class="path">assets/custom.js</code> <code>:710–720</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>The document listener is registered in the <strong>capture phase</strong> on purpose (<code>:2525</code>) so the DOM is cleared <em>before</em> InstantSearch’s own handler reads it — otherwise the URL keeps a stale <code>?on_sale=true</code>.</p>
+
+      <div class="note edit">
+        <span class="lab">How to adjust it</span>
+        <p>Everything lives in <code>clearAllFilters</code> (<code>:2474–2516</code>). To keep a filter from being reset, remove its id from the toggle array at <code>:2475</code> or replace the blanket <code>clearRefinements()</code> with targeted <code>removeDisjunctiveFacetRefinement(...)</code> calls. To add a new Clear-All trigger button, just give it <code>[data-clear-all]</code> — it’s picked up automatically.</p>
+      </div>
+    </section>
+
+    <!-- APPLIED FILTERS BAR -->
+    <section id="plp-bar">
+      <div class="sec-head">
+        <div class="eyebrow">Collection page · TARET-220</div>
+        <h2>Applied Filters bar</h2>
+        <p>A row of removable chips above the grid, so a shopper always sees what’s filtering the results — especially after coming back from a product page.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">What it does</span>
+        <p style="margin-top:12px">When ≥1 filter is active, a bar appears above the grid: a <code>Filters:</code> label, one chip per active filter (<code>Brand: Whirlpool ×</code>), and a Clear All link. Each chip’s × removes just that filter; the bar hides itself when nothing is active. Chips wrap on desktop and scroll horizontally on mobile.</p>
+      </div>
+
+      <h3>How it works</h3>
+      <div class="kv">
+        <dt>Markup</dt><dd><code class="path">sections/algolia_product-list.liquid</code> <code>:133–142</code> — <code>#applied-filters-bar</code> (starts <code>hidden</code>), <code>#applied-filters-chips</code>, and the <code>[data-clear-all]</code> button.</dd>
+        <dt>Render</dt><dd><code>renderAppliedFiltersBar()</code> in <code class="path">assets/algolia_custom.js</code> <code>:576–652</code>, called from <code>renderCurrentRefinements</code> on every InstantSearch render.</dd>
+        <dt>CSS</dt><dd><code class="path">assets/algolia-product-list.css</code> <code>:1489–1562</code>.</dd>
+      </div>
+      <p>Chips come from <strong>three sources</strong> merged together: InstantSearch facets via the <code>currentRefinements</code> connector (<code>:584–608</code>), the toggle checkboxes (<code>:610–620</code>), and the Category checkboxes (<code>:622–626</code>). Show/hide is just the <code>hidden</code> attribute toggled by chip count (<code>:647–651</code>). The price chip is a special case (<code>:585–593</code>): it shows <code>$min – $max</code> and its × clears both bounds and resets the slider.</p>
+
+      <div class="note edit">
+        <span class="lab">How to restyle / change chips</span>
+        <p>Chip HTML template: <code>:629–638</code>. Attribute-label cleanup (stripping <code>meta.algolia.*</code> prefixes): <code>:595–599</code>. Which custom filters appear as chips: the toggle list at <code>:611–614</code> and category block at <code>:622–626</code>. For pure visual changes, target <code>.applied-filters-bar__chip</code>, <code>__chip-remove</code>, <code>__clear</code>, <code>__label</code> in the CSS. Desktop wraps (<code>flex-wrap:wrap</code>); mobile (<code>≤768px</code>) switches to horizontal scroll.</p>
+      </div>
+
+      <div class="shots duo">
+        <figure>
+          <div class="cap"><span>No filters applied · desktop</span><span class="dot"><i></i><i></i><i></i></span></div>
+          <div class="frame tall"><img src="assets/designs/collection-page-no-filters-applied.png" alt="Collection page, no filters, desktop" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="cap"><span>Mobile</span><span class="scrollhint">scroll ↕</span></div>
+          <div class="frame tall"><img src="assets/designs/collection-page-no-filters-applied-1.png" alt="Collection page, no filters, mobile" loading="lazy" /></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SEARCH FLYOUT -->
+    <!-- ============================================================ -->
+    <hr class="div" />
+
+    <section id="fly-overview">
+      <div class="sec-head">
+        <div class="eyebrow">Search flyout · TARET-221 / 223 / 224</div>
+        <h2>How the flyout works</h2>
+        <p>A brand-new predictive search dropdown that opens on focus and runs live Algolia queries as the shopper types. It fully replaces the old quick-search.</p>
+      </div>
+
+      <div class="card">
+        <span class="tag">The moving parts</span>
+        <div class="kv" style="margin-top:14px">
+          <dt>Logic</dt><dd><code class="path">assets/ta-search.js</code> — empty / typing / no-results, SKU match, promo badges, caching.</dd>
+          <dt>Styles</dt><dd><code class="path">assets/ta-search.css</code> — scoped to <code>.ta-empty</code> / <code>.ta-typing</code> / <code>#ta-flyout-portal</code>.</dd>
+          <dt>Content</dt><dd><code class="path">sections/ta-search-flyout.liquid</code> — the Customizer section; emits the config JSON and defines all merchant settings.</dd>
+          <dt>Input</dt><dd><code class="path">snippets/header-inner.liquid</code> — the <code>.header-search</code> input + desktop/mobile containers.</dd>
+          <dt>Promo data</dt><dd><code class="path">snippets/offer-collection-data.liquid</code> — the shared promo-badge helper.</dd>
+        </div>
+      </div>
+
+      <p><code>ta-search.js</code> loads <strong>deferred</strong>, after the Algolia client (<code class="path">layout/theme.liquid</code> <code>:431</code>), and the section is rendered globally (<code>:638</code>) so the config is present on every page. Opens on <code>focus</code> of <code>.header-search</code>; typing is debounced <strong>200&nbsp;ms</strong>; results begin after <strong>2 characters</strong> (configurable 1–5). Desktop renders into a body-level portal <code>#ta-flyout-portal</code> pinned under the header; mobile renders into the existing mobile search modal.</p>
+
+      <div class="note info">
+        <span class="lab">Old code retired</span>
+        <p>The legacy <code class="path">assets/algolia_headercomplete.js</code> is no longer loaded on normal pages — <code>ta-search.js</code> sets <code>window.taSearchOwnsTyping = true</code> and owns the dropdown. The one exception is the Shogun landing layout (<code class="path">layout/theme.shogun.landing.liquid</code>), which still uses the old file and hasn’t been migrated.</p>
+      </div>
+    </section>
+
+    <!-- EMPTY STATE -->
+    <section id="fly-empty">
+      <div class="sec-head">
+        <div class="eyebrow">Search flyout · TARET-221</div>
+        <h2>Empty state (pre-typing)</h2>
+        <p>What a shopper sees the instant they click the search bar, before typing: Promotions, Trending, and Need Help.</p>
+      </div>
+
+      <h3>Promotions</h3>
+      <p>Merchant-controlled cards from the Customizer (<code>promotion</code> blocks). Each has an image, heading, body, link, button label, and <strong>scheduling</strong>: <code>start_at</code>, <code>end_at</code>, and an <code>always_active</code> override. The active-window check runs in JS — <code>isPromoActive(p, now)</code> at <code class="path">assets/ta-search.js</code> <code>:10–15</code> — so scheduling is correct regardless of Shopify’s edge cache. If no promos are currently active, the whole row is hidden.</p>
+
+      <h3>Trending</h3>
+      <p>Automatic, from Algolia’s <strong>Query Suggestions</strong> index — not the Customizer. Fetched once per session (empty query, <code>hitsPerPage:10</code>), cached in <code>sessionStorage</code> under <code>ta_trending</code> with a <strong>30-minute TTL</strong> (<code>:148–173</code>). If the index is missing or the call fails, the row hides cleanly — no hard-coded fallback list.</p>
+      <div class="note heads">
+        <span class="lab">Dependency</span>
+        <p>Trending (and the typing-state Search Suggestions) only populate if a Query Suggestions index exists in Algolia. In the current config <code>query_suggestions_index_name</code> is empty, so the code falls back to <code>shopify_products_query_suggestions</code> — that index must be created dashboard-side or these rows stay empty. See <a href="#algolia">Algolia &amp; the dashboard</a>.</p>
+      </div>
+
+      <h3>Need Help</h3>
+      <p>Customizer <code>help_link</code> blocks (label + link + icon). The icon is a key mapped to an inline SVG in <code>ta-search.js</code> <code>:20–25</code> — available icons: <code>mail</code>, <code>delivery</code>, <code>parts</code>, <code>financing</code>. Adding a new icon means adding the SVG <em>and</em> a matching schema option.</p>
+
+      <div class="shots duo">
+        <figure>
+          <div class="cap"><span>Empty state · desktop</span><span class="dot"><i></i><i></i><i></i></span></div>
+          <div class="frame"><img src="assets/designs/search-empty-state-pre-typing.png" alt="Search empty state, desktop" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="cap"><span>Mobile</span><span class="scrollhint">scroll ↕</span></div>
+          <div class="frame tall"><img src="assets/designs/search-empty-state-pre-typing-1.png" alt="Search empty state, mobile" loading="lazy" /></div>
+        </figure>
+      </div>
+      <div class="shots">
+        <figure>
+          <div class="cap"><span>Empty state · no promotions configured (row hidden) · desktop</span><span class="dot"><i></i><i></i><i></i></span></div>
+          <div class="frame"><img src="assets/designs/search-empty-state-pre-typing-no-promotions-added.png" alt="Empty state with no promotions, desktop" loading="lazy" /></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- TYPING STATE -->
+    <section id="fly-typing">
+      <div class="sec-head">
+        <div class="eyebrow">Search flyout · TARET-223</div>
+        <h2>Typing state</h2>
+        <p>Once the shopper types ≥2 characters, the panel becomes live federated results: suggestions, categories, a product grid, an exact-SKU match, and pages.</p>
+      </div>
+
+      <h3>The queries</h3>
+      <p>Each debounced keystroke fires <strong>three parallel Algolia batches</strong> (run separately so a missing index can’t break the others), then renders once all resolve (<code class="path">assets/ta-search.js</code> <code>:486–513</code>):</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Batch</th><th>Index</th><th>Params</th></tr></thead>
+        <tbody>
+          <tr><td>Products (main)</td><td><code>shopify_productsproducts</code></td><td><code>hitsPerPage:6</code>, <code>filters:'NOT product_type:Rebate'</code>, <code>clickAnalytics:true</code></td></tr>
+          <tr><td>Categories</td><td><code>shopify_productscollections</code></td><td><code>hitsPerPage:6</code></td></tr>
+          <tr><td>Exact SKU</td><td><code>shopify_productsproducts</code></td><td><code>query:''</code>, <code>filters:'sku:"…"'</code>, <code>hitsPerPage:1</code></td></tr>
+          <tr><td>Suggestions</td><td><code>shopify_products_query_suggestions</code></td><td><code>hitsPerPage:6</code> (only if index resolves)</td></tr>
+        </tbody>
+      </table></div>
+      <p>Render order: optional Promotions → Search Suggestions → Categories → Products (exact card + grid) → Pages. A sequence counter discards stale keystrokes so only the latest response paints.</p>
+
+      <h3>Product cards</h3>
+      <p>Each card (<code>productCardHTML</code> <code>:327–352</code>) shows: thumbnail (placeholder fallback), title, price (red), struck compare-at price <em>only when on sale</em>, <code>SKU: …</code>, and the PROMO badge. <strong>MPN is intentionally not rendered anywhere.</strong> The “See all N results” link uses the true <code>nbHits</code> and routes to <code>/search?q=…</code>.</p>
+
+      <h3>Exact-SKU match</h3>
+      <p>The exact-match card is driven by a real filter, not relevance ranking. Query tokens of 4+ characters become <code>sku:"X" OR sku:"Y"</code> (<code>:497–503</code>); a hit renders as a full-width card with a red <strong>EXACT MATCH</strong> badge above the grid, and that product is de-duplicated out of the grid (<code>:410–411</code>). This is the salesperson workflow — type a model/SKU, get the exact product instantly. Requires <code>sku</code> to be a filterable facet in Algolia.</p>
+
+      <h3>PROMO badge</h3>
+      <p>Reused from the collection cards via the shared helper <code>window.taPromoBadge.render(hit.collection_ids, window.taOfferCollData)</code> (<code>:333–334</code>). The badge reads <strong>“Promo”</strong> for one active offer and <strong>“Promos”</strong> for more than one. The offer data and active-window logic live in <code class="path">snippets/offer-collection-data.liquid</code> — see <a href="#algolia">Algolia &amp; the dashboard</a>.</p>
+      <div class="note info">
+        <span class="lab">Implementation note</span>
+        <p>The badge keys off <code>hit.collection_ids</code> matched against <code>window.taOfferCollData</code> (a map of currently-active offer collections, scheduled in <code>America/New_York</code>) — not <code>meta.custom.OfferGroup</code> as some early ticket drafts suggested.</p>
+      </div>
+
+      <h3>Promotions while typing</h3>
+      <p>Controlled by the Customizer toggle <code>promos_while_typing</code> (default <strong>off</strong>). When on, the active-promo row stays pinned at the top of the typing panel using the same scheduling helper.</p>
+
+      <div class="shots duo">
+        <figure>
+          <div class="cap"><span>Typing state · desktop</span><span class="dot"><i></i><i></i><i></i></span></div>
+          <div class="frame tall"><img src="assets/designs/search-typing-state.png" alt="Typing state, desktop" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="cap"><span>Mobile</span><span class="scrollhint">scroll ↕</span></div>
+          <div class="frame tall"><img src="assets/designs/search-typing-state-1.png" alt="Typing state, mobile" loading="lazy" /></div>
+        </figure>
+      </div>
+      <div class="shots duo">
+        <figure>
+          <div class="cap"><span>Exact SKU match · desktop</span><span class="dot"><i></i><i></i><i></i></span></div>
+          <div class="frame tall"><img src="assets/designs/search-typing-state-exact-match-product-shown.png" alt="Exact match shown, desktop" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="cap"><span>Promotions shown · desktop</span><span class="scrollhint">scroll ↕</span></div>
+          <div class="frame tall"><img src="assets/designs/search-typing-state-promotions-shown.png" alt="Promotions shown while typing, desktop" loading="lazy" /></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- NO RESULTS -->
+    <section id="fly-noresults">
+      <div class="sec-head">
+        <div class="eyebrow">Search flyout · TARET-224</div>
+        <h2>No-results state</h2>
+        <p>The zero-product branch of the same typing renderer — a clean message plus a way forward.</p>
+      </div>
+      <p>When the main products query <em>and</em> the exact-SKU query both return zero (<code class="path">assets/ta-search.js</code> <code>:413–416</code>), the panel shows only a message line and the Trending pills. Everything else — suggestions, categories, products, pages, need-help — is hidden, even if those queries had hits.</p>
+      <div class="kv">
+        <dt>Message</dt><dd>From the Customizer label <code>label_no_results</code> with <code>{query}</code> substituted and HTML-escaped (<code>:391–395</code>). Default: <em>“No results for ‘{query}’ — try a different search term”.</em></dd>
+        <dt>Trending</dt><dd>Same cached Query Suggestions data as the empty state — no extra Algolia call.</dd>
+        <dt>Accessibility</dt><dd>The message is in a <code>role="status" aria-live="polite"</code> region so screen readers announce it.</dd>
+        <dt>Enter key</dt><dd>Still routes to <code>/search?q=…</code> for the full results page.</dd>
+      </div>
+      <div class="shots duo">
+        <figure>
+          <div class="cap"><span>No-results · desktop</span><span class="dot"><i></i><i></i><i></i></span></div>
+          <div class="frame"><img src="assets/designs/search-no-results-state.png" alt="No-results state, desktop" loading="lazy" /></div>
+        </figure>
+        <figure>
+          <div class="cap"><span>Mobile</span><span class="scrollhint">scroll ↕</span></div>
+          <div class="frame tall"><img src="assets/designs/search-no-results-state-1.png" alt="No-results state, mobile" loading="lazy" /></div>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- MERCHANT GUIDE -->
+    <!-- ============================================================ -->
+    <hr class="div" />
+
+    <section id="merchant">
+      <div class="sec-head">
+        <div class="eyebrow">For the store admin · no code</div>
+        <h2>Merchant guide — editing in the Customizer</h2>
+        <p>Everything you can change about the search dropdown lives in one place. No developer needed.</p>
+      </div>
+
+      <div class="note info">
+        <span class="lab">Where to find it</span>
+        <p>Shopify admin → <strong>Online Store → Themes → Customize</strong>. In the left panel, open the section named <strong>“Search Flyout.”</strong> It appears on every page because it loads site-wide.</p>
+      </div>
+
+      <h3>Section settings (top of “Search Flyout”)</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Setting</th><th>What it controls</th><th>Default</th></tr></thead>
+        <tbody>
+          <tr><td>Minimum characters</td><td>How many letters before product results appear (1–5)</td><td>2</td></tr>
+          <tr><td>Products shown while typing</td><td>Number of product cards in the grid (2–12)</td><td>6</td></tr>
+          <tr><td>Pin Promotions while typing</td><td>Keep promo cards visible after the shopper starts typing</td><td>Off</td></tr>
+          <tr><td>No-results message</td><td>Text shown when nothing matches. Type <code>{query}</code> and it’s replaced with what they searched.</td><td>“No results for ‘{query}’…”</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Promotions (block)</h3>
+      <p>Promo cards on the empty search view (and, if pinned, while typing). Add up to <strong>4</strong>. Use “Add block → Promotion,” drag to reorder, click to edit, trash to remove.</p>
+      <ul>
+        <li><strong>Image, Heading, Body, Link, Button label</strong> (button defaults to “Shop Now”).</li>
+        <li><strong>Start / End</strong> — type as <code>YYYY-MM-DDTHH:MM</code> in store time, e.g. <code>2026-06-01T09:00</code>. Blank Start = starts now; blank End = no end. The promo only shows inside its window.</li>
+        <li><strong>Always active</strong> — ignores the dates and always shows (handy for evergreen promos or testing).</li>
+      </ul>
+      <div class="note heads">
+        <span class="lab">Date gotcha</span>
+        <p>The format is exact — date and time joined by a <code>T</code>, in <em>store</em> time, not UTC. A mistyped date can make a promo silently never appear. If no promo is active, the whole Promotions row simply hides.</p>
+      </div>
+
+      <h3>Need Help? links (block)</h3>
+      <p>Quick help shortcuts on the empty view. Add up to <strong>6</strong>: a <strong>Label</strong>, a <strong>Link</strong>, and an <strong>Icon</strong> chosen from Mail / Contact, Delivery / Shipping, Parts &amp; Service, Financing. (New icon styles need a developer.) No links added = section hidden.</p>
+
+      <h3>Page links (block)</h3>
+      <p>Pages that can surface in the “Pages” row while typing. Add up to <strong>12</strong>: a <strong>Label</strong> and a <strong>Link</strong>. A page shows only when the typed text appears <em>inside the label</em> — so use clear, keyword-rich labels (e.g. “Financing Options” surfaces on “finance” or “options”). Matching is on the label text only, not page content.</p>
+
+      <h3>Trending — nothing to edit</h3>
+      <p>The Trending pills are automatic, pulled from Algolia’s popular searches. There’s no Customizer field. If they’re empty, it’s the Algolia Query Suggestions index that needs setup — a developer/Algolia task, covered next.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- ALGOLIA -->
+    <!-- ============================================================ -->
+    <hr class="div" />
+
+    <section id="algolia">
+      <div class="sec-head">
+        <div class="eyebrow">For developers / Algolia admin</div>
+        <h2>Algolia &amp; the dashboard</h2>
+        <p>How the theme talks to Algolia, which indices it uses, and what must be configured dashboard-side for every feature to work.</p>
+      </div>
+
+      <h3>Account &amp; config</h3>
+      <p>Config is auto-generated by the <strong>Algolia “AI Search &amp; Discovery” Shopify app</strong> into <code class="path">assets/algolia_config.js</code> (marked “do not modify”). The theme reads <code>window.algoliaShopify.config</code>.</p>
+      <div class="kv">
+        <dt>App ID</dt><dd><code>R0XZPPGX0O</code></dd>
+        <dt>Index prefix</dt><dd><code>shopify_products</code></dd>
+        <dt>Search key</dt><dd><code>ba2ed1edff1c2e7ced7afbddc7f0ab6a</code> (public search-only — safe in client JS)</dd>
+        <dt>Currency</dt><dd><code>CAD</code></dd>
+      </div>
+
+      <h3>Indices</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Index</th><th>Used for</th><th>Key attributes</th></tr></thead>
+        <tbody>
+          <tr><td><code>shopify_productsproducts</code></td><td>PLP grid, product cards, exact-SKU</td><td><code>title</code>, <code>handle</code>, <code>price</code>, <code>compare_at_price</code>, <code>sku</code>, <code>image</code>, <code>collection_ids</code>, <code>meta.algolia.*</code></td></tr>
+          <tr><td><code>shopify_productscollections</code></td><td>Category pills, offer metadata</td><td><code>title</code>, <code>handle</code>, <code>meta.custom.offermetadata</code></td></tr>
+          <tr><td><code>shopify_products_query_suggestions</code></td><td>Trending + Search Suggestions</td><td><code>query</code></td></tr>
+        </tbody>
+      </table></div>
+      <p>Sort uses replica indices <code>shopify_productsproducts_title_asc</code> / <code>_desc</code> (plus price replicas), which must exist dashboard-side.</p>
+
+      <h3>Dashboard settings the build depends on</h3>
+      <p>These aren’t in the theme — they live in Algolia and must be set for the features to work:</p>
+      <ol>
+        <li><strong>Query Suggestions index</strong> — required for Trending and Search Suggestions. Currently <code>query_suggestions_index_name</code> is empty and <code>autocomplete_query_suggestions</code> is <code>false</code>, so the custom flyout falls back to the name <code>shopify_products_query_suggestions</code>. Create that index (Algolia → Query Suggestions, sourced from the products index) or those rows stay hidden.</li>
+        <li><strong><code>sku</code> faceting</strong> — add <code>sku</code> to <em>attributes for faceting</em> as <code>filterOnly(sku)</code> so the exact-match filter works.</li>
+        <li><strong>SKU typo tolerance</strong> — add <code>sku</code> to <em>disableTypoToleranceOnAttributes</em> so codes match exactly, not fuzzily.</li>
+        <li><strong>Other filterable attributes</strong> — <code>collection_ids</code>, <code>meta.custom.OfferGroup</code>, and <code>product_type</code> are all used in filter strings and must be faceted.</li>
+      </ol>
+
+      <h3>Per-collection facets</h3>
+      <p>Which facets show on which collection comes from the <code>collection_facets</code> object in <code class="path">assets/algolia_config.js</code>, keyed by collection ID with a <code>default</code> fallback (selection logic in <code class="path">assets/algolia_facets.js.liquid</code> <code>:148–156</code>). Because that file is auto-generated, change facets through the <strong>Algolia Shopify app’s per-collection facet UI</strong>, which regenerates the file — don’t hand-edit it.</p>
+
+      <h3>Promo / offers data</h3>
+      <p><code class="path">snippets/offer-collection-data.liquid</code> builds <code>window.taOfferCollData</code> from the shop metafield <code>shop.metafields.accentuate.collections</code> and each collection’s <code>custom.offermetadata</code>. An offer counts as active when, in <code>America/New_York</code> time, <code>start_date ≤ today ≤ end_date</code> (end-of-day) and it isn’t hidden. The shared <code>window.taPromoBadge.render()</code> then returns the Promo / Promos badge.</p>
+
+      <h3>Shared display helpers</h3>
+      <p><code class="path">assets/algolia_helpers.js</code> — reuse these, don’t re-roll formatters: <code>displayPrice(item, distinct)</code>, <code>displayStrikedPrice(price, compareAt)</code>, <code>displayDiscount(...)</code>, <code>instantsearchLink(hit)</code>, <code>sizedImage(...)</code>, and per-size image helpers.</p>
+
+      <div class="note edit">
+        <span class="lab">Dashboard ops checklist</span>
+        <p><strong>Reindex:</strong> Shopify admin → Algolia app → Indexing (the app owns sync; the theme can’t reindex). <strong>Query Suggestions:</strong> Algolia → Query Suggestions → create <code>shopify_products_query_suggestions</code> from the products index; confirm hits have a <code>query</code> attribute. <strong>SKU match:</strong> products index → Configuration → Facets → add <code>filterOnly(sku)</code>; Relevance → Typo tolerance → add <code>sku</code> to the disable list. Then type a known SKU in the header search to verify the EXACT MATCH card.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- PERFORMANCE -->
+    <!-- ============================================================ -->
+    <hr class="div" />
+
+    <section id="performance">
+      <div class="sec-head">
+        <div class="eyebrow">Quality · TARET-227 · Blocked</div>
+        <h2>Performance — the 15% threshold</h2>
+        <p>The ticket: the new overlay + URL routing must not increase perceived product-grid load time by more than 15%, measured against a baseline captured before development.</p>
+      </div>
+
+      <div class="note heads">
+        <span class="lab">Why it’s blocked</span>
+        <p>The ticket calls for a baseline taken <em>before</em> development. No such baseline appears to have been captured, so there’s no recorded “before” number to compare a “after” against on the same deployment. That’s the gap to close — the measurement method below makes it repeatable.</p>
+      </div>
+
+      <h3>What we measured (live, Jun 2026)</h3>
+      <p>Lighthouse against <code>/collections/dishwashers</code> on production:</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>Run</th><th>Perf</th><th>FCP</th><th>LCP</th><th>TBT</th><th>CLS</th></tr></thead>
+        <tbody>
+          <tr><td>Desktop</td><td>66</td><td>1.2 s</td><td>1.7 s</td><td>350 ms</td><td>0.03</td></tr>
+          <tr><td>Mobile</td><td>25</td><td>10.8 s</td><td>13.5 s</td><td>2,980 ms</td><td>0.07</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>What actually drives the cost</h3>
+      <p>The low mobile score is <strong>not</strong> the Algolia search work. The dominant costs are:</p>
+      <ul>
+        <li><strong>Server response (TTFB):</strong> the root document took <strong>7–8.6 s</strong> on these runs — a Shopify/server-side cost present on every page, unrelated to this build.</li>
+        <li><strong>Third-party tags:</strong> reCAPTCHA (~376 KB), Podium (~254 KB), GTM/gtag (repeated), Facebook Pixel, Tolstoy — these dominate blocking time.</li>
+        <li><strong>The pre-existing Algolia bundle</strong> (<code>algolia_externals.js</code> ~514 KB, InstantSearch ~297 KB) loads on PLPs and predates this work.</li>
+      </ul>
+
+      <h3>Marginal cost of the new work — verdict</h3>
+      <p>The code added by this build is small and well-isolated relative to the page’s existing bottlenecks:</p>
+      <ul>
+        <li><strong>URL routing</strong> (<code>stateToRoute</code>/<code>routeToState</code>) is synchronous string parsing during InstantSearch init — sub-millisecond. It doesn’t add network round-trips to the grid.</li>
+        <li><strong>Applied Filters bar</strong> renders a handful of chips on each InstantSearch render — trivial DOM work.</li>
+        <li><strong>The flyout JS</strong> (<code>ta-search.js</code>, ~29 KB) loads <em>deferred</em> and only <em>executes</em> when the shopper focuses search — it does not run during PLP grid load.</li>
+      </ul>
+      <p class="lede2">Conclusion: against the real grid-load bottlenecks (TTFB + third-party tags + the existing 800&nbsp;KB Algolia bundle), the new overlay and URL routing add a negligible delta — comfortably inside the 15% budget. The honest caveat is that without a recorded pre-build baseline we’re reasoning from code + current measurements, not a strict before/after on one deployment.</p>
+
+      <div class="note edit">
+        <span class="lab">How to re-run / close the ticket</span>
+        <p>Reproduce the numbers with:</p>
+        <pre>npx lighthouse https://www.taappliance.com/collections/dishwashers \
+  --preset=desktop --only-categories=performance \
+  --output=html --output-path=./plp-baseline</pre>
+        <p>To get a true before/after: measure a PLP on a theme copy <em>without</em> these changes, then the live theme, on the same machine/network. Compare the grid’s LCP / Time-to-Interactive. The saved reports for this run are in <code class="path">perf/</code> next to this hub. For a fairer “code” comparison, also run on a staging URL to remove the third-party-tag noise that dominates production.</p>
+      </div>
+    </section>
+
+    <!-- HEADS UP -->
+    <section id="heads-up">
+      <div class="sec-head">
+        <div class="eyebrow">Quality</div>
+        <h2>Known issues / heads-up</h2>
+        <p>Small things worth knowing before you touch the code or sign off.</p>
+      </div>
+      <ul>
+        <li><strong>Query Suggestions index is dormant.</strong> Until <code>shopify_products_query_suggestions</code> exists in Algolia, Trending and the typing-state Search Suggestions render nothing (silently). This is the most user-visible gap.</li>
+        <li><strong>Legacy <code>#cat=</code> shim remains.</strong> The hash→query migration at <code class="path">assets/algolia_custom.js</code> <code>:865–881</code> wasn’t removed; it’s intentional backward-compat but worth noting if the ticket expected full deletion.</li>
+        <li><strong>CSS typo:</strong> <code>padding: 0x</code> at <code class="path">assets/algolia-product-list.css</code> <code>:1561</code> — invalid value, silently ignored by browsers. Harmless but should be fixed.</li>
+        <li><strong>Empty-state open timing:</strong> if there are no active promotions <em>and</em> no help links <em>and</em> no cached trending, the flyout waits for the trending fetch before opening. With any promo or help link configured this is a non-issue.</li>
+        <li><strong>Shogun landing not migrated:</strong> <code class="path">layout/theme.shogun.landing.liquid</code> still loads the old <code>algolia_headercomplete.js</code>. Migrate it for full parity.</li>
+        <li><strong>Analytics (TARET-226) in UAT:</strong> <code>clickAnalytics:true</code> is set on the queries; the GTM/GA4 wiring is still being verified.</li>
+      </ul>
+    </section>
+
+    <!-- REFERENCE -->
+    <section id="reference">
+      <div class="sec-head">
+        <div class="eyebrow">Appendix</div>
+        <h2>File &amp; ticket reference</h2>
+      </div>
+
+      <h3>Files touched</h3>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>File</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><code>assets/algolia_custom.js</code></td><td>PLP: URL router, Clear All, Applied Filters bar, popstate sync</td></tr>
+          <tr><td><code>sections/algolia_product-list.liquid</code></td><td>PLP markup: filters bar, toggles, mobile drawer buttons</td></tr>
+          <tr><td><code>assets/algolia-product-list.css</code></td><td>Applied Filters bar + chip styles</td></tr>
+          <tr><td><code>assets/custom.js</code></td><td>Mobile drawer Clear/Apply wiring</td></tr>
+          <tr><td><code>assets/ta-search.js</code></td><td>Flyout: empty / typing / no-results, SKU match, caching</td></tr>
+          <tr><td><code>assets/ta-search.css</code></td><td>Flyout styling</td></tr>
+          <tr><td><code>sections/ta-search-flyout.liquid</code></td><td>Customizer section + config JSON</td></tr>
+          <tr><td><code>snippets/header-inner.liquid</code></td><td>Search input + flyout containers</td></tr>
+          <tr><td><code>snippets/offer-collection-data.liquid</code></td><td>Promo badge data + shared renderer</td></tr>
+          <tr><td><code>assets/algolia_config.js</code></td><td>Auto-generated Algolia config (do not hand-edit)</td></tr>
+          <tr><td><code>assets/algolia_facets.js.liquid</code></td><td>Per-collection facet → widget mapping</td></tr>
+          <tr><td><code>assets/algolia_helpers.js</code></td><td>Shared price/image/link helpers</td></tr>
+          <tr><td><code>layout/theme.liquid</code></td><td>Loads <code>ta-search.js</code>; renders the flyout section</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>Tickets</h3>
+      <p>Epic group <strong>TARET</strong>. Design reference: <a href="http://trailappliances.com" target="_blank" rel="noopener">Trail Appliances</a> (structure &amp; interaction only — TA brand red <code>#D51317</code> throughout). Full ticket detail in the Jira export shipped with this build.</p>
+
+      <div class="footer">
+        TA Appliance · Search &amp; Collection build documentation · generated from theme export <code>22JUN2026-0526pm</code> + Jira TARET export.
+      </div>
+    </section>
+
+  </div>
+  </main>
+</div>
+
+<script>
+// Scroll-spy: highlight the nav link for the section in view.
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var map = {};
+  links.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if(el) map[id] = a;
+  });
+  var ids = Object.keys(map);
+  if(!ids.length) return;
+  var current = null;
+  function setActive(id){
+    if(id===current) return;
+    current = id;
+    links.forEach(function(a){ a.classList.remove('active'); });
+    if(map[id]) map[id].classList.add('active');
+  }
+  var obs = new IntersectionObserver(function(entries){
+    // pick the entry nearest the top that is intersecting
+    var visible = entries.filter(function(e){return e.isIntersecting;})
+                         .sort(function(a,b){return a.boundingClientRect.top - b.boundingClientRect.top;});
+    if(visible.length){ setActive(visible[0].target.id); }
+  }, { rootMargin: '-10% 0px -70% 0px', threshold: 0 });
+  ids.forEach(function(id){ obs.observe(document.getElementById(id)); });
+})();
+</script>
+</body>
+</html>
